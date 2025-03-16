@@ -3,15 +3,13 @@ from database.postgres_manager import get_engine
 from main import make_logger
 import matplotlib.pyplot as plt
 import seaborn as sns
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
 import warnings
 warnings.filterwarnings('ignore')
 
 logger = make_logger()
 def perform_eda(output_dir="./eda_output"):
     import os
-    if not os.path.exist(output_dir):
+    if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     logger.info("Starting Exploratory Data Analysis")
