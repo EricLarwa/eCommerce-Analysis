@@ -1,20 +1,16 @@
 import pandas as pd
 import kagglehub
-from sqlalchemy import create_engine
+from .database.postgres_manager import get_engine
+from .database.mongodb_manager import setup_mongodb
+from .data_pipeline.data_loader import preprocess_data
+from .data_pipeline.feature_eng import create_all_features
 from sqlalchemy.ext.declarative import declarative_base
 import logging
-import pymongo
 
-pg_engine = create_engine('postgresql://username:password@localhost:5432/ecommerce_db')
+pg_engine = get_engine()
+mongo_db = setup_mongodb()
+preferences_collection = mongo_db['user_references']
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler("ecommerce_analysis.log"), logging.StreamHandler()]
-)
-logger = logging.getLogger(__name__)
-
-path = kagglehub.dataset_download("mkechinov/ecommerce-behavior-data-from-multi-category-store")
 Base = declarative_base()
 
 def make_logger():
@@ -25,39 +21,37 @@ def make_logger():
     )
     logger = logging.getLogger(__name__)
     return logger
+
+logger = make_logger()
 def get_path():
     path = kagglehub.dataset_download("mkechinov/ecommerce-behavior-data-from-multi-category-store")
     return path
 
-def setup_postgresql():
-    engine = pg_engine
-    Base.metadata.create_all(engine)
-    logger.info("PostgreSQL tables created")
-    return engine
-
-def setup_mongodb():
-    client = pymongo.MongoClient("mongodb://localhost:27017/")
-    db = client["ecommerce_preferences"]
-
-    if "user_preferences" not in db.list_collection_names():
-        db.create_collection("user_preferences")
-
-    if "recommendations" not in db.list_collection_names():
-        db.create_collection("recommendations")
-
-    if "user_segments" not in db.list_collection_names():
-        db.create_collection("user_segments")
-
-    logger.info("MongoDB collections created")
-    return client, db
 def process_batch(path):
+    """Process a batch of data and store it in the databases."""
+    try:
+        df = pd.read_csv(path)
 
-    df = pd.read_csv(path)
+        # Store transaction data in PostgreSQL
+        df[['event_time', 'user_id', 'product_id', 'price', 'event_type']].to_sql(
+            'transactions', pg_engine, if_exists='append', index=False)
 
-    df[['event_time', 'user_id', 'product_id', 'price', 'event_type']].to_sql(
-        'transactions', pg_engine, if_exists='append', index=False)
+        # Prepare and store user preferences in MongoDB
+        preferences = df.groupby('user_id')['category_id'].value_counts().reset_index(name='count')
+        preferences_records = preferences.to_dict('records')
+        preferences_collection.insert_many(preferences_records)
 
-    preferences = df.groupby('user_id')['category_id'].value_counts().reset_index(name='count')
-    preferences_records = preferences.to_dict('records')
+        make_logger().info(f"Processed batch from {path} successfully.")
+    except Exception as e:
+        logger.error(f"Error processing batch from {path}: {e}")
 
-    preferences_collection.insert_many(preferences_records)
+def main():
+    path = get_path()
+    preprocess_data(path, batch_size=1000)
+
+    create_all_features(pg_engine, mongo_db, days_lookback=90)
+
+
+
+if __name__ == "__main__":
+    main()
