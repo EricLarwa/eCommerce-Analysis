@@ -1,25 +1,31 @@
 import pymongo
-import logging
+from utils import make_logger
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[logging.FileHandler("ecommerce_analysis.log"), logging.StreamHandler()]
-)
-logger = logging.getLogger(__name__)
+logger = make_logger()
 
 def setup_mongodb():
-    client = pymongo.MongoClient("mongodb://localhost:27017/")
-    db = client["ecommerce_preferences"]
+    try:
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
 
-    if "user_preferences" not in db.list_collection_names():
-        db.create_collection("user_preferences")
+        client.server_info()
 
-    if "recommendations" not in db.list_collection_names():
-        db.create_collection("recommendations")
+        db = client["ecommerce_preferences"]
 
-    if "user_segments" not in db.list_collection_names():
-        db.create_collection("user_segments")
+        if "user_preferences" not in db.list_collection_names():
+            db.create_collection("user_preferences")
 
-    logger.info("MongoDB collections created")
-    return client, db
+        if "recommendations" not in db.list_collection_names():
+            db.create_collection("recommendations")
+
+        if "user_segments" not in db.list_collection_names():
+            db.create_collection("user_segments")
+
+        logger.info("MongoDB collections created")
+        return client, db
+    except pymongo.errors.ServerSelectionTimeoutError as e:
+        logger.error(f"MongoDB connection error: {e}")
+        return None, None
+    except Exception as e:
+        logger.error(f"MongoDB setup error: {e}")
+        raise
+

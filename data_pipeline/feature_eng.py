@@ -2,9 +2,8 @@ import pandas as pd
 import pymongo
 from database.postgres_manager import get_engine
 from database.mongodb_manager import setup_mongodb
-from sqlalchemy import create_engine
 from datetime import datetime, timedelta
-from main import make_logger
+from utils import make_logger
 
 pg_engine = get_engine()
 mongo_db = setup_mongodb()

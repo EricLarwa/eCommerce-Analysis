@@ -1,6 +1,6 @@
 import pandas as pd
 from database.postgres_manager import get_engine
-from main import make_logger
+from utils import make_logger
 import matplotlib.pyplot as plt
 import seaborn as sns
 import warnings
