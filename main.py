@@ -1,31 +1,19 @@
 import pandas as pd
-import kagglehub
-from .database.postgres_manager import get_engine
-from .database.mongodb_manager import setup_mongodb
-from .data_pipeline.data_loader import preprocess_data
-from .data_pipeline.feature_eng import create_all_features
+from utils import get_path
+from database.postgres_manager import get_engine
+from database.mongodb_manager import setup_mongodb
+from data_pipeline.data_loader import preprocess_data
+from data_pipeline.feature_eng import create_all_features
 from sqlalchemy.ext.declarative import declarative_base
-import logging
+from utils import make_logger
 
 pg_engine = get_engine()
 mongo_db = setup_mongodb()
 preferences_collection = mongo_db['user_references']
+logger = make_logger()
 
 Base = declarative_base()
 
-def make_logger():
-    logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-        handlers=[logging.FileHandler("ecommerce_analysis.log"), logging.StreamHandler()]
-    )
-    logger = logging.getLogger(__name__)
-    return logger
-
-logger = make_logger()
-def get_path():
-    path = kagglehub.dataset_download("mkechinov/ecommerce-behavior-data-from-multi-category-store")
-    return path
 
 def process_batch(path):
     """Process a batch of data and store it in the databases."""
