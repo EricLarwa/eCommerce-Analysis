@@ -6,7 +6,7 @@ pg_engine = None
 def get_engine():
     global pg_engine
     if pg_engine is None:
-        pg_engine = create_engine('postgresql://username:password@localhost:5432/ecommerce_db')
+        pg_engine = create_engine('postgresql://postgres:password@localhost:5432/ecommerce_db')
     return pg_engine
 
 def get_session():
