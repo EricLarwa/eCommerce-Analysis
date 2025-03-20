@@ -20,6 +20,7 @@ def create_all_features(pg_engine, mongo_db, days_lookback: int = 90):
     create_interaction_features(pg_engine, mongo_db, days_lookback)
 
     logger.info("All features created successfully")
+
 def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
     """Create and store user-related features."""
     logger.info("Creating user features")
@@ -34,7 +35,7 @@ def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
             MAX(event_time) as last_purchase_date,
             COUNT(DISTINCT CASE WHEN event_type = 'purchase' THEN CAST(event_time AS date) ELSE NULL END) as frequency,
             SUM(CASE WHEN event_type = 'purchase' THEN price ELSE 0 END) as monetary
-        FROM transactions
+        FROM ecommerce_db
         WHERE event_time >= '{cutoff_date.isoformat()}'
         GROUP BY user_id
     ),
@@ -47,7 +48,7 @@ def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
             COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) as purchase_count,
             COUNT(DISTINCT product_id) as unique_products_interacted,
             COUNT(DISTINCT CASE WHEN event_type = 'purchase' THEN product_id ELSE NULL END) as unique_products_purchased
-        FROM transactions
+        FROM ecommerce_db
         WHERE event_time >= '{cutoff_date.isoformat()}'
         GROUP BY user_id
     )
@@ -81,30 +82,28 @@ def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
     # Category Preferences Query
     category_query = f"""
     SELECT 
-        t.user_id,
-        p.category_id,
-        COUNT(CASE WHEN t.event_type = 'view' THEN 1 END) as view_count,
-        COUNT(CASE WHEN t.event_type = 'cart' THEN 1 END) as cart_count,
-        COUNT(CASE WHEN t.event_type = 'purchase' THEN 1 END) as purchase_count
-    FROM transactions t
-    JOIN products p ON t
-    product_id = p.product_id
-        WHERE t.event_time >= '{cutoff_date.isoformat()}'
-        GROUP BY t.user_id, p.category_id
-        """
+        e.user_id,
+        e.category_id,
+        COUNT(CASE WHEN e.event_type = 'view' THEN 1 END) as view_count,
+        COUNT(CASE WHEN e.event_type = 'cart' THEN 1 END) as cart_count,
+        COUNT(CASE WHEN e.event_type = 'purchase' THEN 1 END) as purchase_count
+    FROM ecommerce_db e
+    WHERE e.event_time >= '{cutoff_date.isoformat()}'
+    GROUP BY e.user_id, e.category_id
+    """
 
     df_category = pd.read_sql(category_query, pg_engine)
 
     # Time Pattern Analysis Query
     time_query = f"""
-        SELECT 
-            user_id,
-            EXTRACT(HOUR FROM event_time) as hour_of_day,
-            COUNT(*) as event_count
-        FROM transactions
-        WHERE event_time >= '{cutoff_date.isoformat()}'
-        GROUP BY user_id, EXTRACT(HOUR FROM event_time)
-        """
+    SELECT 
+        user_id,
+        EXTRACT(HOUR FROM event_time) as hour_of_day,
+        COUNT(*) as event_count
+    FROM ecommerce_db
+    WHERE event_time >= '{cutoff_date.isoformat()}'
+    GROUP BY user_id, EXTRACT(HOUR FROM event_time)
+    """
 
     df_time = pd.read_sql(time_query, pg_engine)
 
@@ -291,29 +290,39 @@ def create_product_features(pg_engine, mongo_db, days_lookback: int = 90):
     product_query = f"""
     WITH product_stats AS (
         SELECT 
-            t.product_id,
-            COUNT(DISTINCT t.user_id) as unique_users,
-            COUNT(CASE WHEN t.event_type = 'view' THEN 1 END) as view_count,
-            COUNT(CASE WHEN t.event_type = 'cart' THEN 1 END) as cart_count,
-            COUNT(CASE WHEN t.event_type = 'purchase' THEN 1 END) as purchase_count
-        FROM transactions t
-        WHERE t.event_time >= '{cutoff_date.isoformat()}'
-        GROUP BY t.product_id
+            e.product_id,
+            COUNT(DISTINCT e.user_id) as unique_users,
+            COUNT(CASE WHEN e.event_type = 'view' THEN 1 END) as view_count,
+            COUNT(CASE WHEN e.event_type = 'cart' THEN 1 END) as cart_count,
+            COUNT(CASE WHEN e.event_type = 'purchase' THEN 1 END) as purchase_count
+        FROM ecommerce_db e
+        WHERE e.event_time >= '{cutoff_date.isoformat()}'
+        GROUP BY e.product_id
     ),
     product_price AS (
         SELECT 
             product_id,
             PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price) as median_price
-        FROM transactions
+        FROM ecommerce_db
         WHERE event_time >= '{cutoff_date.isoformat()}'
         GROUP BY product_id
+    ),
+    product_info AS (
+        SELECT DISTINCT
+            product_id,
+            category_id,
+            category_code,
+            brand,
+            price
+        FROM ecommerce_db
+        WHERE event_time >= '{cutoff_date.isoformat()}'
     )
     SELECT 
-        p.product_id,
-        p.category_id,
-        p.category_code,
-        p.brand,
-        COALESCE(pp.median_price, p.price) as price,
+        ps.product_id,
+        pi.category_id,
+        pi.category_code,
+        pi.brand,
+        COALESCE(pp.median_price, pi.price) as price,
         COALESCE(ps.view_count, 0) as view_count,
         COALESCE(ps.cart_count, 0) as cart_count,
         COALESCE(ps.purchase_count, 0) as purchase_count,
@@ -326,12 +335,10 @@ def create_product_features(pg_engine, mongo_db, days_lookback: int = 90):
             WHEN ps.purchase_count > 0 THEN ps.unique_users::float / ps.purchase_count
             ELSE 0
         END as purchase_rate
-    FROM products p
-    LEFT JOIN product_stats ps ON p.product_id = ps.product_id
-    LEFT JOIN product_price pp ON p.product_id = pp.product_id
-    WHERE p
-        product_id IS NOT NULL
-        """
+    FROM product_stats ps
+    LEFT JOIN product_info pi ON ps.product_id = pi.product_id
+    LEFT JOIN product_price pp ON ps.product_id = pp.product_id
+    """
 
     df_product_features = pd.read_sql(product_query, pg_engine)
 
@@ -381,16 +388,16 @@ def create_interaction_features(pg_engine, mongo_db, days_lookback: int = 90):
     cutoff_date = datetime.now() - timedelta(days=days_lookback)
 
     interaction_query = f"""
-        SELECT 
-            user_id,
-            product_id,
-            COUNT(CASE WHEN event_type = 'view' THEN 1 END) as view_count,
-            COUNT(CASE WHEN event_type = 'cart' THEN 1 END) as cart_count,
-            COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) as purchase_count
-        FROM transactions
-        WHERE event_time >= '{cutoff_date.isoformat()}'
-        GROUP BY user_id, product_id
-        """
+    SELECT 
+        user_id,
+        product_id,
+        COUNT(CASE WHEN event_type = 'view' THEN 1 END) as view_count,
+        COUNT(CASE WHEN event_type = 'cart' THEN 1 END) as cart_count,
+        COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) as purchase_count
+    FROM ecommerce_db
+    WHERE event_time >= '{cutoff_date.isoformat()}'
+    GROUP BY user_id, product_id
+    """
 
     df_interaction_features = pd.read_sql(interaction_query, pg_engine)
 
@@ -431,4 +438,3 @@ def create_interaction_features(pg_engine, mongo_db, days_lookback: int = 90):
     )
 
     return True
-
