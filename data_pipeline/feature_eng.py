@@ -3,6 +3,8 @@ import pymongo
 from database.postgres_manager import get_engine
 from database.mongodb_manager import setup_mongodb
 from datetime import datetime, timedelta
+import matplotlib as plt
+import seaborn as sns
 from utils import make_logger
 
 pg_engine = get_engine()
@@ -10,8 +12,25 @@ mongo_db = setup_mongodb()
 
 logger = make_logger()
 
+def plot_user_activity_over_time(df_time):
+    plt.figure(figsize=(12,6))
+    activity_over_time = df_time.groupby('hour_of_day')['event_count'].sum().reset_index()
+    sns.lineplot(data=activity_over_time, x='hour_of_day', y='event_count')
+    plt.title('User  Activity Over Time')
+    plt.xlabel('Hour of Day')
+    plt.ylabel('Number of Events')
+    plt.xticks(range(0, 24))
+    plt.grid()
+    plt.show()
 
-def create_all_features(pg_engine, mongo_db, days_lookback: int = 90):
+def plot_user_segmentation(df_rfm):
+    segmentation_counts= df_rfm['activity_status'].value_counts()
+    plt.figure(figsize=(8,8))
+    plt.pie(segmentation_counts, labels=segmentation_counts.index, autopct='%1.1f%%', startangle=90)
+    plt.title('User Segmentation by Activity Status')
+    plt.axis('equal')
+    plt.show()
+def create_all_features(pg_engine, mongo_db, days_lookback: int = 30):
     """Generate all features for users, products, and interactions."""
     logger.info(f"Creating all features with {days_lookback} days lookback")
 
@@ -21,7 +40,7 @@ def create_all_features(pg_engine, mongo_db, days_lookback: int = 90):
 
     logger.info("All features created successfully")
 
-def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
+def create_user_features(pg_engine, mongo_db, days_lookback: int = 30):
     """Create and store user-related features."""
     logger.info("Creating user features")
 
@@ -64,13 +83,13 @@ def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
         CASE WHEN us.view_count > 0 THEN us.cart_count::float / us.view_count ELSE 0 END as cart_conversion_rate,
         CASE WHEN us.cart_count > 0 THEN us.purchase_count::float / us.cart_count ELSE 0 END as purchase_conversion_rate,
         CASE WHEN pd.last_purchase_date IS NOT NULL 
-            THEN EXTRACT(DAY FROM NOW() - pd.last_purchase_date) 
+            THEN EXTRACT(DAY FROM NOW()::timestamp - pd.last_purchase_date::timestamp) 
             ELSE 999 
         END as days_since_last_purchase,
         COALESCE(pd.frequency, 0) as purchase_frequency,
         CASE 
             WHEN pd.last_purchase_date IS NULL THEN 'inactive'
-            WHEN EXTRACT(DAY FROM NOW() - pd.last_purchase_date) <= 30 THEN 'active'
+            WHEN EXTRACT(DAY FROM NOW()::timestamp - pd.last_purchase_date::timestamp) <= 30 THEN 'active'
             ELSE 'lapsed'
         END as activity_status
     FROM user_stats us
@@ -98,13 +117,14 @@ def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
     time_query = f"""
     SELECT 
         user_id,
-        EXTRACT(HOUR FROM event_time) as hour_of_day,
+        EXTRACT(HOUR FROM event_time::timestamp) as hour_of_day,
         COUNT(*) as event_count
     FROM ecommerce_db
     WHERE event_time >= '{cutoff_date.isoformat()}'
-    GROUP BY user_id, EXTRACT(HOUR FROM event_time)
+    GROUP BY user_id, EXTRACT(HOUR FROM event_time::timestamp)
     """
 
+    df_rfm = pd.read_sql(rfm_query, pg_engine)
     df_time = pd.read_sql(time_query, pg_engine)
 
     bulk_operations = []
@@ -214,6 +234,9 @@ def create_user_features(pg_engine, mongo_db, days_lookback: int = 90):
     user_features_collection.create_index("user_id")
     user_features_collection.create_index("rfm_metrics.activity_status")
 
+    plot_user_segmentation(df_rfm)
+    plot_user_activity_over_time(df_time)
+
 def calculate_rfm_score(recency: float, frequency: int, monetary: float) -> dict:
     """Calculate RFM scores and segment."""
     # Recency score (lower days = higher score)
@@ -281,7 +304,7 @@ def calculate_rfm_score(recency: float, frequency: int, monetary: float) -> dict
         "segment": segment
     }
 
-def create_product_features(pg_engine, mongo_db, days_lookback: int = 90):
+def create_product_features(pg_engine, mongo_db, days_lookback: int = 30):
     """Create and store product-related features."""
     logger.info("Creating product features")
 
@@ -381,7 +404,7 @@ def create_product_features(pg_engine, mongo_db, days_lookback: int = 90):
     logger.info(f"Created features for {len(df_product_features)} products")
     product_features_collection.create_index("product_id")
 
-def create_interaction_features(pg_engine, mongo_db, days_lookback: int = 90):
+def create_interaction_features(pg_engine, mongo_db, days_lookback: int = 30):
     """Create and store interaction-related features."""
     logger.info("Creating interaction features")
 
