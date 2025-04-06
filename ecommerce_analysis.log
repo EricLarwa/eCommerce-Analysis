@@ -29,3 +29,64 @@
 2025-03-20 18:55:43,604 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 67dc9cd1513748e66456f28d, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
 2025-03-20 18:55:43,818 - utils - INFO - Creating all features with 90 days lookback
 2025-03-20 18:55:43,818 - utils - INFO - Creating user features
+2025-03-20 19:10:21,388 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 67dca03ef14881048ba974d7, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-03-20 19:10:51,726 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 67dca05df14881048ba974d8, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-03-20 19:10:51,928 - utils - INFO - Creating all features with 90 days lookback
+2025-03-20 19:10:51,928 - utils - INFO - Creating user features
+2025-04-06 17:43:07,074 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 67f2f54c9e458701aafe54e3, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-06 17:43:37,481 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 67f2f56b9e458701aafe54e4, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-06 17:43:37,795 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:43:37,796 - utils - INFO - Creating user features
+2025-04-06 17:49:14,903 - utils - INFO - MongoDB collections created
+2025-04-06 17:49:14,915 - utils - INFO - MongoDB collections created
+2025-04-06 17:49:15,246 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:49:15,247 - utils - INFO - Creating user features
+2025-04-06 17:54:44,289 - utils - INFO - MongoDB collections created
+2025-04-06 17:54:44,296 - utils - INFO - MongoDB collections created
+2025-04-06 17:54:44,602 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:54:44,602 - utils - INFO - Creating user features
+2025-04-06 17:56:45,254 - utils - INFO - MongoDB collections created
+2025-04-06 17:56:45,259 - utils - INFO - MongoDB collections created
+2025-04-06 17:56:45,595 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:56:45,595 - utils - INFO - Creating user features
+2025-04-06 17:57:42,142 - utils - INFO - MongoDB collections created
+2025-04-06 17:57:42,149 - utils - INFO - MongoDB collections created
+2025-04-06 17:57:42,440 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:57:42,440 - utils - INFO - Creating user features
+2025-04-06 17:58:25,813 - utils - INFO - MongoDB collections created
+2025-04-06 17:58:25,828 - utils - INFO - MongoDB collections created
+2025-04-06 17:58:26,114 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:58:26,114 - utils - INFO - Creating user features
+2025-04-06 17:59:54,472 - utils - INFO - MongoDB collections created
+2025-04-06 17:59:54,478 - utils - INFO - MongoDB collections created
+2025-04-06 17:59:54,813 - utils - INFO - Creating all features with 90 days lookback
+2025-04-06 17:59:54,814 - utils - INFO - Creating user features
+2025-04-06 18:03:22,572 - utils - INFO - MongoDB collections created
+2025-04-06 18:03:22,578 - utils - INFO - MongoDB collections created
+2025-04-06 18:03:22,867 - utils - INFO - Creating all features with 30 days lookback
+2025-04-06 18:03:22,868 - utils - INFO - Creating user features
+2025-04-06 18:09:31,777 - utils - INFO - MongoDB collections created
+2025-04-06 18:09:31,781 - utils - INFO - MongoDB collections created
+2025-04-06 18:09:32,113 - utils - INFO - Creating all features with 30 days lookback
+2025-04-06 18:09:32,113 - utils - INFO - Creating user features
+2025-04-06 18:11:48,505 - utils - INFO - MongoDB collections created
+2025-04-06 18:11:48,511 - utils - INFO - MongoDB collections created
+2025-04-06 18:11:48,771 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-06 18:24:37,547 - utils - INFO - MongoDB collections created
+2025-04-06 18:24:37,553 - utils - INFO - MongoDB collections created
+2025-04-06 18:24:37,814 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-06 18:29:44,643 - utils - INFO - MongoDB collections created
+2025-04-06 18:29:44,649 - utils - INFO - MongoDB collections created
+2025-04-06 18:29:46,073 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-06 18:46:16,353 - utils - INFO - MongoDB collections created
+2025-04-06 18:46:16,358 - utils - INFO - MongoDB collections created
+2025-04-06 18:46:16,583 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-06 18:46:16,897 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-06 18:47:12,223 - utils - INFO - Completed analysis: Event Type Distribution
+2025-04-06 18:47:12,227 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-06 18:48:11,159 - utils - INFO - Completed analysis: Top Product Categories
+2025-04-06 18:48:11,164 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-06 18:49:29,802 - utils - INFO - Completed analysis: Purchase Funnel
+2025-04-06 18:49:29,802 - utils - INFO - Starting analysis: Time Based Analysis
+2025-04-06 18:50:33,761 - utils - INFO - Completed analysis: Time Based Analysis
+2025-04-06 18:50:33,763 - utils - INFO - Starting analysis: Price Distribution
