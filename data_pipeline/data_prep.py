@@ -1,41 +1,27 @@
 import pandas as pd
 from sqlalchemy import create_engine
+import kagglehub
 import os
+from tqdm import tqdm
 
 pg_engine = create_engine('postgresql://postgres:password@localhost:5432/ecommerce_db')
 
-# change to your specific path
-directory_path = '/Users/ericlarwa/.cache/kagglehub/datasets/mkechinov/ecommerce-behavior-data-from-multi-category-store/versions/8'
-
+dataset_path = kagglehub.dataset_download("mkechinov/ecommerce-behavior-data-from-multi-category-store")
 
 file_names = ['2019-Nov.csv', '2019-Oct.csv']
+file_paths = [os.path.join(dataset_path, name) for name in file_names]
 
-file_paths = [os.path.join(directory_path, file_name) for file_name in file_names]
-
-dataframes = []
-
-def append_and_write_to_db(df, engine):
-    dataframes.append(df)  # Append to the list
-    df.to_sql('ecommerce_db', engine, if_exists='append', index=False, chunksize=5000)
+def write_csv_in_chunks(file_path, engine):
+    try:
+        total_lines = sum(1 for _ in open(file_path)) - 1
+        chunk_size = 5000
+        with tqdm(total=total_lines, desc=f"Uploading {os.path.basename(file_path)}") as pbar:
+            for chunk in pd.read_csv(file_path, chunksize=chunk_size):
+                chunk.to_sql('ecommerce_data', engine, if_exists='append', index=False)
+                pbar.update(len(chunk))
+        print(f" Finished: {file_path}")
+    except Exception as e:
+        print(f" Error processing {file_path}: {e}")
 
 for file_path in file_paths:
-    try:
-        for chunk in pd.read_csv(file_path, chunksize=5000):
-            append_and_write_to_db(chunk, pg_engine)
-        print(f"Processed {file_path} successfully.")
-    except Exception as e:
-        print(f"An error occurred while processing {file_path}: {e}")
-
-if dataframes:
-    combined_data = pd.concat(dataframes, ignore_index=True)
-    try:
-        combined_data.to_sql('ecommerce_db', pg_engine, if_exists='append', index=False, chunksize=5000)
-    except Exception as e:
-        print(f"An error occurred while writing combined data: {e}")
-
-print(combined_data.head())
-
-with pg_engine.connect() as connection:
-    result = connection.execute("SELECT * FROM ecommerce_db LIMIT 5;")
-    for row in result:
-        print(row)
+    write_csv_in_chunks(file_path, pg_engine)

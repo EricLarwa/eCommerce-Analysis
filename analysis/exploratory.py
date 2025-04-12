@@ -37,14 +37,14 @@ def perform_eda(output_dir="./eda_output"):
             LIMIT 20
         """),
         ("Purchase Funnel", """
-            SELECT 
+            SELECT
                 COUNT(DISTINCT CASE WHEN event_type = 'view' THEN user_id END) as views,
                 COUNT(DISTINCT CASE WHEN event_type = 'cart' THEN user_id END) as carts,
                 COUNT(DISTINCT CASE WHEN event_type = 'purchase' THEN user_id END) as purchases
             FROM ecommerce_db
         """),
         ("Time Based Analysis", """
-            SELECT 
+            SELECT
                 DATE_TRUNC('day', event_time::timestamp) as day,
                 COUNT(*) as events
             FROM ecommerce_db
@@ -54,7 +54,7 @@ def perform_eda(output_dir="./eda_output"):
         ("Price Distribution", """
             SELECT price
             FROM ecommerce_db
-            WHERE price > 0 AND price < 1000  
+            WHERE price > 0 AND price < 1000 LIMIT 1000000  
         """)
     ]
 
