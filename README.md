@@ -1,8 +1,8 @@
 Required Dependicies: 
 
-Pandas
-MatPlotLib
-Seaborn
-Sqlalchemy
-PyMongo
-KaggleHub
+Pandas,
+MatPlotLib,
+Seaborn,
+Sqlalchemy,
+PyMongo,
+KaggleHub,
