@@ -2,7 +2,6 @@ import pandas as pd
 from utils import get_path
 from database.postgres_manager import get_engine
 from database.mongodb_manager import setup_mongodb
-from data_pipeline.data_loader import preprocess_data
 from data_pipeline.feature_eng import create_all_features
 from predictor import run_predictions
 from analysis.exploratory import perform_eda
@@ -16,11 +15,10 @@ logger = make_logger()
 def main():
     path = get_path()
 
-    perform_eda()
+    # perform_eda()
 
-    create_all_features(pg_engine, mongo_db, days_lookback=30)
+    create_all_features(pg_engine, mongo_db)
 
-    preprocess_data(path, batch_size=1000)
 
     run_predictions()
 

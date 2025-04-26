@@ -17,6 +17,12 @@ def setup_mongodb():
         if "recommendations" not in db.list_collection_names():
             db.create_collection("recommendations")
 
+        if "product_features" not in db.list_collection_names():
+            db.create_collection("product_features")
+
+        if "interaction_features" not in db.list_collection_names():
+            db.create_collection("interaction_features")
+
         if "user_segments" not in db.list_collection_names():
             db.create_collection("user_segments")
 
