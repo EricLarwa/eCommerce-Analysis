@@ -4,7 +4,7 @@ import kagglehub
 import os
 from tqdm import tqdm
 
-pg_engine = create_engine('postgresql://postgres:password@localhost:5432/ecommerce_db')
+pg_engine = create_engine('postgresql://postgres:Majoie@localhost:5432/ecommerce_db')
 
 dataset_path = kagglehub.dataset_download("mkechinov/ecommerce-behavior-data-from-multi-category-store")
 
