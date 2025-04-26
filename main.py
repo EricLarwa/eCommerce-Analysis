@@ -4,6 +4,7 @@ from database.postgres_manager import get_engine
 from database.mongodb_manager import setup_mongodb
 from data_pipeline.data_loader import preprocess_data
 from data_pipeline.feature_eng import create_all_features
+from predictor import run_predictions
 from analysis.exploratory import perform_eda
 from utils import make_logger
 
@@ -20,6 +21,8 @@ def main():
     create_all_features(pg_engine, mongo_db, days_lookback=30)
 
     preprocess_data(path, batch_size=1000)
+
+    run_predictions()
 
 
 
