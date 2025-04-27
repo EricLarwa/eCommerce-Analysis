@@ -13,11 +13,11 @@ logger = make_logger()
 
 
 def main():
-    path = get_path()
+    # path = get_path()
 
     # perform_eda()
 
-    create_all_features(pg_engine, mongo_db)
+    # create_all_features(pg_engine, mongo_db)
 
 
     run_predictions()

@@ -26,34 +26,67 @@ def create_all_features(pg_engine, mongo_db):
     """Generate all features for users, products, and interactions."""
     logger.info(f"Creating all features ")
 
-    create_user_features(pg_engine, mongo_db)
-    create_product_features(pg_engine, mongo_db)
-    create_interaction_features(pg_engine, mongo_db)
+    #create_user_features(pg_engine, mongo_db)
+    #create_product_features(pg_engine, mongo_db)
+    #create_interaction_features(pg_engine, mongo_db)
 
     logger.info("All features created successfully")
 
+
 def create_user_features(pg_engine, mongo_db):
-    """Create and store user-related features."""
+    """Create and store user-related features with optimized queries."""
     logger.info("Creating user features")
 
     client = mongo_db[0]
     db = mongo_db[1]
-
     cutoff_date = datetime(2019, 10, 1)
 
-    # RFM Analysis Query
-    rfm_query = f"""
-    WITH purchase_data AS (
+    # Process users in batches to avoid memory issues
+    batch_size = 10000
+    offset = 0
+
+    max_batches = 10  # Adjust as needed
+    batch_count = 0
+
+    while batch_count < max_batches:
+        batch_count += 1
+        logger.info(f"Processing batch #{batch_count} with offset {offset}")
+
+        # Step 1: Get a batch of users to process
+        user_batch_query = f"""
+        SELECT DISTINCT user_id 
+        FROM ecommerce_db
+        WHERE event_time >= '{cutoff_date.isoformat()}'
+        ORDER BY user_id
+        LIMIT {batch_size} OFFSET {offset}
+        """
+
+        user_batch = pd.read_sql(user_batch_query, pg_engine)
+
+        if user_batch.empty:
+            logger.info("No more users to process. Exiting.")
+            break
+
+        user_ids = tuple(user_batch['user_id'].tolist())
+        if len(user_ids) == 1:
+            user_filter = f"user_id = {user_ids[0]}"
+        else:
+            user_filter = f"user_id IN {user_ids}"
+
+        # Step 2: Get purchase data for this batch
+        purchase_query = f"""
         SELECT 
             user_id,
             MAX(event_time) as last_purchase_date,
             COUNT(DISTINCT CASE WHEN event_type = 'purchase' THEN CAST(event_time AS date) ELSE NULL END) as frequency,
             SUM(CASE WHEN event_type = 'purchase' THEN price ELSE 0 END) as monetary
         FROM ecommerce_db
-        WHERE event_time >= '{cutoff_date.isoformat()}'
+        WHERE event_time >= '{cutoff_date.isoformat()}' AND {user_filter}
         GROUP BY user_id
-    ),
-    user_stats AS (
+        """
+
+        # Step 3: Get user stats for this batch
+        stats_query = f"""
         SELECT 
             user_id,
             COUNT(*) as total_events,
@@ -63,171 +96,173 @@ def create_user_features(pg_engine, mongo_db):
             COUNT(DISTINCT product_id) as unique_products_interacted,
             COUNT(DISTINCT CASE WHEN event_type = 'purchase' THEN product_id ELSE NULL END) as unique_products_purchased
         FROM ecommerce_db
-        WHERE event_time >= '{cutoff_date.isoformat()}'
+        WHERE event_time >= '{cutoff_date.isoformat()}' AND {user_filter}
         GROUP BY user_id
-    )
-    SELECT 
-        us.user_id,
-        us.total_events,
-        us.view_count,
-        us.cart_count,
-        us.purchase_count,
-        COALESCE(pd.monetary, 0) as total_spent,
-        us.unique_products_interacted,
-        us.unique_products_purchased,
-        CASE WHEN us.view_count > 0 THEN us.cart_count::float / us.view_count ELSE 0 END as cart_conversion_rate,
-        CASE WHEN us.cart_count > 0 THEN us.purchase_count::float / us.cart_count ELSE 0 END as purchase_conversion_rate,
-        CASE WHEN pd.last_purchase_date IS NOT NULL 
-            THEN EXTRACT(DAY FROM NOW()::timestamp - pd.last_purchase_date::timestamp) 
-            ELSE 999 
-        END as days_since_last_purchase,
-        COALESCE(pd.frequency, 0) as purchase_frequency,
-        CASE 
-            WHEN pd.last_purchase_date IS NULL THEN 'inactive'
-            WHEN EXTRACT(DAY FROM NOW()::timestamp - pd.last_purchase_date::timestamp) <= 30 THEN 'active'
-            ELSE 'lapsed'
-        END as activity_status
-    FROM user_stats us
-    LEFT JOIN purchase_data pd ON us.user_id = pd.user_id
-    """
+        """
 
-    # Category Preferences Query
-    category_query = f"""
-    SELECT 
-        e.user_id,
-        e.category_id,
-        COUNT(CASE WHEN e.event_type = 'view' THEN 1 END) as view_count,
-        COUNT(CASE WHEN e.event_type = 'cart' THEN 1 END) as cart_count,
-        COUNT(CASE WHEN e.event_type = 'purchase' THEN 1 END) as purchase_count
-    FROM ecommerce_db e
-    WHERE e.event_time >= '{cutoff_date.isoformat()}'
-    GROUP BY e.user_id, e.category_id
-    """
+        df_purchase = pd.read_sql(purchase_query, pg_engine)
+        df_stats = pd.read_sql(stats_query, pg_engine)
 
-    df_category = pd.read_sql(category_query, pg_engine)
+        # Step 4: Merge the results
+        df_rfm = pd.merge(df_stats, df_purchase, on='user_id', how='left')
 
-    # Time Pattern Analysis Query
-    time_query = f"""
-    SELECT 
-        user_id,
-        EXTRACT(HOUR FROM event_time::timestamp) as hour_of_day,
-        COUNT(*) as event_count
-    FROM ecommerce_db
-    WHERE event_time >= '{cutoff_date.isoformat()}'
-    GROUP BY user_id, EXTRACT(HOUR FROM event_time::timestamp)
-    """
+        # Add calculated fields
+        df_rfm['total_spent'] = df_rfm['monetary'].fillna(0)
+        df_rfm['cart_conversion_rate'] = df_rfm.apply(
+            lambda x: x['cart_count'] / x['view_count'] if x['view_count'] > 0 else 0, axis=1)
+        df_rfm['purchase_conversion_rate'] = df_rfm.apply(
+            lambda x: x['purchase_count'] / x['cart_count'] if x['cart_count'] > 0 else 0, axis=1)
 
-    df_rfm = pd.read_sql(rfm_query, pg_engine)
-    df_time = pd.read_sql(time_query, pg_engine)
+        reference_date = datetime(2019, 11, 30)
 
-    bulk_operations = []
-    user_features_collection = db["user_features"]
+        df_rfm['days_since_last_purchase'] = df_rfm.apply(
+            lambda x: (reference_date - pd.to_datetime(x['last_purchase_date']).replace(tzinfo=None)).days
+            if pd.notna(x['last_purchase_date']) else 999, axis=1)
 
-    for _, user_row in df_rfm.iterrows():
-        user_id = user_row['user_id']
+        df_rfm['activity_status'] = df_rfm.apply(
+            lambda x: 'inactive' if pd.isna(x['last_purchase_date']) else
+            ('active' if x['days_since_last_purchase'] <= 30 else 'lapsed'),
+            axis=1)
 
-        # Get category preferences
-        user_categories = df_category[df_category['user_id'] == user_id]
-        category_prefs = {}
+        # Step 5: Get category preferences
+        category_query = f"""
+        SELECT 
+            e.user_id,
+            e.category_id,
+            COUNT(CASE WHEN e.event_type = 'view' THEN 1 END) as view_count,
+            COUNT(CASE WHEN e.event_type = 'cart' THEN 1 END) as cart_count,
+            COUNT(CASE WHEN e.event_type = 'purchase' THEN 1 END) as purchase_count
+        FROM ecommerce_db e
+        WHERE e.event_time >= '{cutoff_date.isoformat()}' AND {user_filter}
+        GROUP BY e.user_id, e.category_id
+        """
 
-        if not user_categories.empty:
-            for _, cat_row in user_categories.iterrows():
-                cat_id = cat_row['category_id']
-                score = (cat_row['view_count'] +
-                         cat_row['cart_count'] * 3 +
-                         cat_row['purchase_count'] * 5)
-                category_prefs[cat_id] = score
+        df_category = pd.read_sql(category_query, pg_engine)
 
-            total_score = sum(category_prefs.values())
-            if total_score > 0:
-                category_prefs = {k: round(v / total_score * 100, 2) for k, v in category_prefs.items()}
+        # Step 6: Get time patterns
+        time_query = f"""
+        SELECT 
+            user_id,
+            EXTRACT(HOUR FROM event_time::timestamp) as hour_of_day,
+            COUNT(*) as event_count
+        FROM ecommerce_db
+        WHERE event_time >= '{cutoff_date.isoformat()}' AND {user_filter}
+        GROUP BY user_id, EXTRACT(HOUR FROM event_time::timestamp)
+        """
 
-        # Time pattern detection
-        user_time = df_time[df_time['user_id'] == user_id]
-        time_pattern = {}
+        df_time = pd.read_sql(time_query, pg_engine)
 
-        if not user_time.empty:
-            time_buckets = {
-                'morning': 0,
-                'afternoon': 0,
-                'evening': 0,
-                'night': 0
+        bulk_operations = []
+        user_features_collection = db["user_features"]
+
+        for _, user_row in df_rfm.iterrows():
+            user_id = user_row['user_id']
+
+            # Initialize category_prefs
+            category_prefs = {}
+
+            # Get category preferences
+            user_categories = df_category[df_category['user_id'] == user_id]
+            if not user_categories.empty:
+                for _, cat_row in user_categories.iterrows():
+                    cat_id = cat_row['category_id']
+                    score = (cat_row['view_count'] +
+                             cat_row['cart_count'] * 3 +
+                             cat_row['purchase_count'] * 5)
+                    category_prefs[str(cat_id)] = score
+
+                total_score = sum(category_prefs.values())
+                if total_score > 0:
+                    category_prefs = {k: round(v / total_score * 100, 2) for k, v in category_prefs.items()}
+
+            # Initialize time_pattern
+            time_pattern = {}
+
+            # Time pattern detection
+            user_time = df_time[df_time['user_id'] == user_id]
+            if not user_time.empty:
+                time_buckets = {
+                    'morning': 0,
+                    'afternoon': 0,
+                    'evening': 0,
+                    'night': 0
+                }
+
+                for _, time_row in user_time.iterrows():
+                    hour = time_row['hour_of_day']
+                    count = time_row['event_count']
+
+                    if 5 <= hour < 12:
+                        time_buckets['morning'] += count
+                    elif 12 <= hour < 17:
+                        time_buckets['afternoon'] += count
+                    elif 17 <= hour < 22:
+                        time_buckets['evening'] += count
+                    else:
+                        time_buckets['night'] += count
+
+                total_time_events = sum(time_buckets.values())
+                if total_time_events > 0:
+                    time_pattern = {k: round(v / total_time_events * 100, 2) for k, v in time_buckets.items()}
+
+            # RFM Segmentation
+            rfm_score = calculate_rfm_score(
+                user_row['days_since_last_purchase'],
+                user_row['frequency'] if 'frequency' in user_row else 0,
+                user_row['total_spent']
+            )
+
+            user_features = {
+                'user_id': user_id,
+                'basic_metrics': {
+                    'total_events': int(user_row['total_events']),
+                    'view_count': int(user_row['view_count']),
+                    'cart_count': int(user_row['cart_count']),
+                    'purchase_count': int(user_row['purchase_count']),
+                    'total_spent': float(user_row['total_spent']),
+                    'unique_products_interacted': int(user_row['unique_products_interacted']),
+                    'unique_products_purchased': int(user_row['unique_products_purchased'])
+                },
+                'conversion_metrics': {
+                    'cart_conversion_rate': float(user_row['cart_conversion_rate']),
+                    'purchase_conversion_rate': float(user_row['purchase_conversion_rate'])
+                },
+                'rfm_metrics': {
+                    'recency': int(user_row['days_since_last_purchase']),
+                    'frequency': int(user_row['frequency']) if 'frequency' in user_row else 0,
+                    'monetary': float(user_row['total_spent']),
+                    'rfm_score': rfm_score,
+                    'activity_status': user_row['activity_status']
+                },
+                'category_preferences': category_prefs,
+                'time_patterns': time_pattern,
+                'last_updated': datetime.now()
             }
 
-            for _, time_row in user_time.iterrows():
-                hour = time_row['hour_of_day']
-                count = time_row['event_count']
-
-                if 5 <= hour < 12:
-                    time_buckets['morning'] += count
-                elif 12 <= hour < 17:
-                    time_buckets['afternoon'] += count
-                elif 17 <= hour < 22:
-                    time_buckets['evening'] += count
-                else:
-                    time_buckets['night'] += count
-
-            total_time_events = sum(time_buckets.values())
-            if total_time_events > 0:
-                time_pattern = {k: round(v / total_time_events * 100, 2) for k, v in time_buckets.items()}
-
-        # RFM Segmentation
-        rfm_score = calculate_rfm_score(
-            user_row['days_since_last_purchase'],
-            user_row['purchase_frequency'],
-            user_row['total_spent']
-        )
-
-        # Create user feature document
-        user_features = {
-            'user_id': user_id,
-            'basic_metrics': {
-                'total_events': int(user_row['total_events']),
-                'view_count': int(user_row['view_count']),
-                'cart_count': int(user_row['cart_count']),
-                'purchase_count': int(user_row['purchase_count']),
-                'total_spent': float(user_row['total_spent']),
-                'unique_products_interacted': int(user_row['unique_products_interacted']),
-                'unique_products_purchased': int(user_row['unique_products_purchased'])
-            },
-            'conversion_metrics': {
-                'cart_conversion_rate': float(user_row['cart_conversion_rate']),
-                'purchase_conversion_rate': float(user_row['purchase_conversion_rate'])
-            },
-            'rfm_metrics': {
-                'recency': int(user_row['days_since_last_purchase']),
-                'frequency': int(user_row['purchase_frequency']),
-                'monetary': float(user_row['total_spent']),
-                'rfm_score': rfm_score,
-                'activity_status': user_row['activity_status']
-            },
-            'category_preferences': category_prefs,
-            'time_patterns': time_pattern,
-            'last_updated': datetime.now()
-        }
-
-        bulk_operations.append(
-            pymongo.UpdateOne(
-                {'user_id': user_id},
-                {'$set': user_features},
-                upsert=True
+            bulk_operations.append(
+                pymongo.UpdateOne(
+                    {'user_id': user_id},
+                    {'$set': user_features},
+                    upsert=True
+                )
             )
-        )
 
-        # Execute in batches of 1000
-        if len(bulk_operations) >= 1000:
+            if len(bulk_operations) >= 1000:
+                user_features_collection.bulk_write(bulk_operations)
+                bulk_operations = []
+
+        if bulk_operations:
             user_features_collection.bulk_write(bulk_operations)
-            bulk_operations = []
 
-    # Insert any remaining operations
-    if bulk_operations:
-        user_features_collection.bulk_write(bulk_operations)
+        offset += batch_size
+        logger.info(f"Processed batch {batch_count} with {len(df_rfm)} users")
 
-    logger.info(f"Created features for {len(df_rfm)} users")
+    if batch_count >= max_batches:
+        logger.warning(f"Reached maximum batch count of {max_batches}. Consider adjusting parameters.")
+
+    logger.info("Finished creating user features")
     user_features_collection.create_index("user_id")
     user_features_collection.create_index("rfm_metrics.activity_status")
-
-    plot_user_segmentation(df_rfm)
 
 def calculate_rfm_score(recency: float, frequency: int, monetary: float) -> dict:
     """Calculate RFM scores and segment."""
