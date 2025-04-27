@@ -10371,3 +10371,202 @@ Name: count, dtype: int64
 2025-04-27 14:02:36,011 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
 2025-04-27 14:02:36,018 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
 2025-04-27 14:02:36,128 - utils - INFO - ✅ Prediction complete. Charts and CSV saved to predictions/
+2025-04-27 14:14:20,354 - utils - INFO - MongoDB collections created
+2025-04-27 14:14:28,233 - utils - INFO - MongoDB collections created
+2025-04-27 14:14:28,234 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 14:14:28,360 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 14:15:23,586 - utils - INFO - Completed analysis: Event Type Distribution
+2025-04-27 14:15:23,590 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 14:16:23,244 - utils - INFO - Completed analysis: Top Product Categories
+2025-04-27 14:16:23,248 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 14:18:30,025 - utils - ERROR - Error in Purchase Funnel: The truth value of a Series is ambiguous. Use a.empty, a.bool(), a.item(), a.any() or a.all().
+2025-04-27 14:18:30,029 - utils - INFO - Starting analysis: Time Based Analysis
+2025-04-27 14:19:43,909 - utils - INFO - Completed analysis: Time Based Analysis
+2025-04-27 14:19:43,915 - utils - INFO - Starting analysis: Price Distribution
+2025-04-27 14:19:52,741 - utils - INFO - Completed analysis: Price Distribution
+2025-04-27 14:19:52,743 - utils - INFO - Starting analysis: Top Brands by Purchase Count
+2025-04-27 14:19:52,744 - utils - INFO - Completed analysis: Top Brands by Purchase Count
+2025-04-27 14:19:52,744 - utils - INFO - Starting analysis: User Activity Distribution
+2025-04-27 14:19:52,744 - utils - INFO - Completed analysis: User Activity Distribution
+2025-04-27 14:19:52,744 - utils - INFO - Starting analysis: Hourly Event Trend
+2025-04-27 14:19:52,744 - utils - INFO - Completed analysis: Hourly Event Trend
+2025-04-27 14:19:52,745 - utils - INFO - Starting analysis: Category Conversion Rate
+2025-04-27 14:19:52,745 - utils - INFO - Completed analysis: Category Conversion Rate
+2025-04-27 14:19:52,745 - utils - INFO - Starting analysis: Cart Abandonment
+2025-04-27 14:19:52,745 - utils - INFO - Completed analysis: Cart Abandonment
+2025-04-27 14:19:52,745 - utils - INFO - EDA complete - visualizations saved to ./eda_output
+2025-04-27 15:16:02,702 - utils - INFO - MongoDB collections created
+2025-04-27 15:16:11,214 - utils - INFO - MongoDB collections created
+2025-04-27 15:16:11,214 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 15:16:11,348 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 15:17:09,056 - utils - ERROR - Error in Event Type Distribution: No module named 'cairosvg'
+2025-04-27 15:17:09,064 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 15:18:22,925 - utils - ERROR - Error in Top Product Categories: No module named 'cairosvg'
+2025-04-27 15:18:22,932 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 15:25:36,675 - utils - INFO - MongoDB collections created
+2025-04-27 15:25:44,644 - utils - INFO - MongoDB collections created
+2025-04-27 15:25:44,645 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 15:25:44,660 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 15:26:39,853 - utils - ERROR - Error in Event Type Distribution: 'Bar' object has no attribute 'render_to_svg'
+2025-04-27 15:26:39,861 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 15:29:49,263 - utils - INFO - MongoDB collections created
+2025-04-27 15:29:57,568 - utils - INFO - MongoDB collections created
+2025-04-27 15:29:57,569 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 15:29:57,706 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 15:29:58,002 - utils - ERROR - Error in Event Type Distribution: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,003 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 15:29:58,007 - utils - ERROR - Error in Top Product Categories: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,007 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 15:29:58,010 - utils - ERROR - Error in Purchase Funnel: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,010 - utils - INFO - Starting analysis: Time Based Analysis
+2025-04-27 15:29:58,012 - utils - ERROR - Error in Time Based Analysis: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,012 - utils - INFO - Starting analysis: Price Distribution
+2025-04-27 15:29:58,014 - utils - ERROR - Error in Price Distribution: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,015 - utils - INFO - Starting analysis: Top Brands by Purchase Count
+2025-04-27 15:29:58,017 - utils - ERROR - Error in Top Brands by Purchase Count: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,017 - utils - INFO - Starting analysis: User Activity Distribution
+2025-04-27 15:29:58,020 - utils - ERROR - Error in User Activity Distribution: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,020 - utils - INFO - Starting analysis: Hourly Event Trend
+2025-04-27 15:29:58,023 - utils - ERROR - Error in Hourly Event Trend: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,023 - utils - INFO - Starting analysis: Category Conversion Rate
+2025-04-27 15:29:58,025 - utils - ERROR - Error in Category Conversion Rate: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,025 - utils - INFO - Starting analysis: Cart Abandonment
+2025-04-27 15:29:58,028 - utils - ERROR - Error in Cart Abandonment: no library called "cairo-2" was found
+no library called "cairo" was found
+no library called "libcairo-2" was found
+cannot load library 'libcairo.so.2': dlopen(libcairo.so.2, 0x0002): tried: 'libcairo.so.2' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.so.2' (no such file), '/usr/lib/libcairo.so.2' (no such file, not in dyld cache), 'libcairo.so.2' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.so.2'
+cannot load library 'libcairo.2.dylib': dlopen(libcairo.2.dylib, 0x0002): tried: 'libcairo.2.dylib' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo.2.dylib' (no such file), '/usr/lib/libcairo.2.dylib' (no such file, not in dyld cache), 'libcairo.2.dylib' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo.2.dylib'
+cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'libcairo-2.dll' (no such file), '/System/Volumes/Preboot/Cryptexes/OSlibcairo-2.dll' (no such file), '/usr/lib/libcairo-2.dll' (no such file, not in dyld cache), 'libcairo-2.dll' (no such file).  Additionally, ctypes.util.find_library() did not manage to locate a library called 'libcairo-2.dll'
+2025-04-27 15:29:58,028 - utils - INFO - EDA complete - visualizations saved to ./eda_output
+2025-04-27 15:32:53,970 - utils - INFO - MongoDB collections created
+2025-04-27 15:32:54,436 - utils - INFO - MongoDB collections created
+2025-04-27 15:32:54,436 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 15:32:54,460 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 15:33:57,371 - utils - INFO - Completed analysis: Event Type Distribution
+2025-04-27 15:33:57,391 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 15:35:06,887 - utils - ERROR - Error in Top Product Categories: 'HorizontalBar' object has no attribute 'render_to_svg'
+2025-04-27 15:35:06,895 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 15:40:32,380 - utils - INFO - MongoDB collections created
+2025-04-27 15:40:40,508 - utils - INFO - MongoDB collections created
+2025-04-27 15:40:40,509 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 15:40:40,654 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 15:41:39,543 - utils - INFO - Completed analysis: Event Type Distribution
+2025-04-27 15:41:39,547 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 15:42:34,684 - utils - INFO - Completed analysis: Top Product Categories
+2025-04-27 15:42:34,686 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 15:44:36,601 - utils - INFO - Completed analysis: Purchase Funnel
+2025-04-27 15:44:36,603 - utils - INFO - Starting analysis: Time Based Analysis
+2025-04-27 15:45:43,726 - utils - INFO - Completed analysis: Time Based Analysis
+2025-04-27 15:45:43,730 - utils - INFO - Starting analysis: Price Distribution
+2025-04-27 15:48:06,091 - utils - INFO - Completed analysis: Price Distribution
+2025-04-27 15:48:06,110 - utils - INFO - Starting analysis: Top Brands by Purchase Count
+2025-04-27 15:48:59,058 - utils - INFO - Completed analysis: Top Brands by Purchase Count
+2025-04-27 15:48:59,063 - utils - INFO - Starting analysis: User Activity Distribution
+2025-04-27 15:51:51,720 - utils - INFO - Completed analysis: User Activity Distribution
+2025-04-27 15:51:51,723 - utils - INFO - Starting analysis: Hourly Event Trend
+2025-04-27 15:53:09,855 - utils - INFO - Completed analysis: Hourly Event Trend
+2025-04-27 15:53:09,858 - utils - INFO - Starting analysis: Category Conversion Rate
+2025-04-27 15:54:37,171 - utils - INFO - Completed analysis: Category Conversion Rate
+2025-04-27 15:54:37,181 - utils - INFO - Starting analysis: Cart Abandonment
+2025-04-27 15:55:25,014 - utils - INFO - Completed analysis: Cart Abandonment
+2025-04-27 15:55:25,027 - utils - INFO - EDA complete - visualizations saved to ./eda_output
+2025-04-27 16:26:39,232 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 680e92e07dcefab9b18705dd, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-27 16:27:17,932 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 680e93077dcefab9b18705de, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-27 16:27:17,935 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 16:27:18,082 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 16:28:12,634 - utils - INFO - Completed analysis: Event Type Distribution
+2025-04-27 16:28:12,637 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 16:29:10,427 - utils - INFO - Completed analysis: Top Product Categories
+2025-04-27 16:29:10,432 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 16:29:10,432 - utils - INFO - Completed analysis: Purchase Funnel
+2025-04-27 16:29:10,432 - utils - INFO - Starting analysis: Time Based Analysis
+2025-04-27 16:30:18,265 - utils - INFO - Completed analysis: Time Based Analysis
+2025-04-27 16:30:18,267 - utils - INFO - Starting analysis: Price Distribution
+2025-04-27 16:30:18,267 - utils - INFO - Completed analysis: Price Distribution
+2025-04-27 16:30:18,267 - utils - INFO - Starting analysis: Top Brands by Purchase Count
+2025-04-27 16:30:18,267 - utils - INFO - Completed analysis: Top Brands by Purchase Count
+2025-04-27 16:30:18,267 - utils - INFO - Starting analysis: User Activity Distribution
+2025-04-27 16:30:18,267 - utils - INFO - Completed analysis: User Activity Distribution
+2025-04-27 16:30:18,267 - utils - INFO - Starting analysis: Hourly Event Trend
+2025-04-27 16:31:25,183 - utils - INFO - Completed analysis: Hourly Event Trend
+2025-04-27 16:31:25,187 - utils - INFO - Starting analysis: Category Conversion Rate
+2025-04-27 16:31:25,187 - utils - INFO - Completed analysis: Category Conversion Rate
+2025-04-27 16:31:25,187 - utils - INFO - Starting analysis: Cart Abandonment
+2025-04-27 16:31:25,187 - utils - INFO - Completed analysis: Cart Abandonment
+2025-04-27 16:31:25,187 - utils - INFO - EDA complete - visualizations saved to ./eda_output
+2025-04-27 16:42:10,719 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 680e9684b83d76150ec73f8c, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-27 16:42:48,872 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 680e96aab83d76150ec73f8d, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-27 16:42:48,882 - utils - INFO - Starting Exploratory Data Analysis
+2025-04-27 16:42:49,033 - utils - INFO - Starting analysis: Event Type Distribution
+2025-04-27 16:43:47,785 - utils - INFO - Completed analysis: Event Type Distribution
+2025-04-27 16:43:47,790 - utils - INFO - Starting analysis: Top Product Categories
+2025-04-27 16:44:47,921 - utils - INFO - Completed analysis: Top Product Categories
+2025-04-27 16:44:47,924 - utils - INFO - Starting analysis: Purchase Funnel
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Purchase Funnel
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: Time Based Analysis
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Time Based Analysis
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: Price Distribution
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Price Distribution
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: Top Brands by Purchase Count
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Top Brands by Purchase Count
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: User Activity Distribution
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: User Activity Distribution
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: Hourly Event Trend
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Hourly Event Trend
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: Category Conversion Rate
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Category Conversion Rate
+2025-04-27 16:44:47,925 - utils - INFO - Starting analysis: Cart Abandonment
+2025-04-27 16:44:47,925 - utils - INFO - Completed analysis: Cart Abandonment
+2025-04-27 16:44:47,925 - utils - INFO - EDA complete - visualizations saved to ./eda_output
+2025-04-27 16:52:30,752 - utils - ERROR - MongoDB connection error: localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms), Timeout: 30s, Topology Description: <TopologyDescription id: 680e98f06c87d4d60289584d, topology_type: Unknown, servers: [<ServerDescription ('localhost', 27017) server_type: Unknown, rtt: None, error=AutoReconnect('localhost:27017: [Errno 61] Connection refused (configured timeouts: socketTimeoutMS: 20000.0ms, connectTimeoutMS: 20000.0ms)')>]>
+2025-04-27 16:54:52,566 - utils - INFO - MongoDB collections created
+2025-04-27 16:54:52,964 - utils - INFO - MongoDB collections created
+2025-04-27 16:54:52,965 - utils - INFO - Connecting to databases...
+2025-04-27 16:54:52,974 - utils - INFO - MongoDB collections created
+2025-04-27 16:54:52,974 - utils - INFO - Loading user features from MongoDB...
+2025-04-27 16:54:52,983 - utils - ERROR - No user features found.

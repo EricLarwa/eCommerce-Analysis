@@ -135,12 +135,21 @@ def run_predictions(output_dir="./predictions"):
         by='purchase_probability', ascending=False).head(10)
     top_users.to_csv(f"{output_dir}/top_predicted_users.csv", index=False)
 
+    # Convert user_id to string and truncate/format for better readability
+    top_users['display_id'] = top_users['user_id'].astype(str).apply(lambda x: f"User {x[-6:]}")
+
     plt.figure(figsize=(10, 6))
-    sns.barplot(x='purchase_probability', y='user_id', data=top_users, palette='crest')
+    # Use a horizontal bar chart for better readability
+    ax = sns.barplot(x='purchase_probability', y='display_id', data=top_users, palette='crest')
+
+    # Add the exact probability value at the end of each bar
+    for i, v in enumerate(top_users['purchase_probability']):
+        ax.text(v + 0.01, i, f"{v:.3f}", va='center')
+
     plt.title("Top 10 Users by Predicted Purchase Probability")
     plt.xlabel("Probability")
-    plt.ylabel("User ID")
-    plt.xlim(0, 1)
+    plt.ylabel("User ID (last 6 digits)")
+    plt.xlim(0, 1.05)  # Add some space for the text labels
     plt.tight_layout()
     plt.savefig(f"{output_dir}/top_predicted_users.png")
     plt.close()
