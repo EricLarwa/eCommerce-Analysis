@@ -5,6 +5,7 @@ from database.mongodb_manager import setup_mongodb
 from datetime import datetime, timedelta
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 from utils import make_logger
 
 pg_engine = get_engine()
@@ -12,25 +13,166 @@ mongo_db = setup_mongodb()
 
 logger = make_logger()
 
+
 def plot_user_segmentation(df_rfm, output_dir='./Feature_output'):
-    import os
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-    segmentation_counts= df_rfm['activity_status'].value_counts()
-    plt.figure(figsize=(8,8))
+    segmentation_counts = df_rfm['activity_status'].value_counts()
+    plt.figure(figsize=(8, 8))
     plt.pie(segmentation_counts, labels=segmentation_counts.index, autopct='%1.1f%%', startangle=90)
     plt.title('User Segmentation by Activity Status')
     plt.axis('equal')
-    plt.savefig(f"{output_dir}/user_segmentation")
-def create_all_features(pg_engine, mongo_db):
-    """Generate all features for users, products, and interactions."""
-    logger.info(f"Creating all features ")
+    plt.savefig(f"{output_dir}/user_segmentation.png")
+    plt.close()
 
-    #create_user_features(pg_engine, mongo_db)
-    #create_product_features(pg_engine, mongo_db)
-    #create_interaction_features(pg_engine, mongo_db)
+    # Additional user visualizations
+    plt.figure(figsize=(10, 6))
+    sns.histplot(df_rfm['total_spent'], bins=20, kde=True)
+    plt.title('Distribution of Total Spending by Users')
+    plt.xlabel('Total Spent ($)')
+    plt.ylabel('Number of Users')
+    plt.savefig(f"{output_dir}/user_spending_distribution.png")
+    plt.close()
+
+    # RFM segments visualization
+    if 'rfm_segment' in df_rfm.columns:
+        plt.figure(figsize=(10, 6))
+        segment_counts = df_rfm['rfm_segment'].value_counts()
+        sns.barplot(x=segment_counts.index, y=segment_counts.values)
+        plt.title('User Segments Based on RFM Analysis')
+        plt.xlabel('Segment')
+        plt.ylabel('Number of Users')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(f"{output_dir}/user_rfm_segments.png")
+        plt.close()
+
+
+def plot_product_analytics(df_product, output_dir='./Feature_output'):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Top 10 products by view
+    top_viewed = df_product.sort_values('view_count', ascending=False).head(10)
+    plt.figure(figsize=(12, 6))
+    sns.barplot(x='view_count', y='product_id', data=top_viewed)
+    plt.title('Top 10 Most Viewed Products')
+    plt.xlabel('View Count')
+    plt.ylabel('Product ID')
+    plt.tight_layout()
+    plt.savefig(f"{output_dir}/top_viewed_products.png")
+    plt.close()
+
+    # Product conversion rates
+    plt.figure(figsize=(12, 6))
+    df_conversion = df_product[df_product['view_count'] > 100].sort_values('cart_rate', ascending=False).head(10)
+    sns.barplot(x='cart_rate', y='product_id', data=df_conversion)
+    plt.title('Top 10 Products by Cart Conversion Rate (min 100 views)')
+    plt.xlabel('Cart Conversion Rate')
+    plt.ylabel('Product ID')
+    plt.tight_layout()
+    plt.savefig(f"{output_dir}/product_conversion_rates.png")
+    plt.close()
+
+    # Price distribution by category
+    if 'category_code' in df_product.columns and df_product['category_code'].notna().any():
+        plt.figure(figsize=(14, 8))
+        top_categories = df_product['category_code'].value_counts().head(8).index
+        df_filtered = df_product[df_product['category_code'].isin(top_categories)]
+        sns.boxplot(x='category_code', y='price', data=df_filtered)
+        plt.title('Price Distribution by Top Categories')
+        plt.xlabel('Category')
+        plt.ylabel('Price ($)')
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+        plt.savefig(f"{output_dir}/price_by_category.png")
+        plt.close()
+
+
+def plot_interaction_patterns(df_interaction, output_dir='./Feature_output'):
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    # Distribution of interaction counts
+    plt.figure(figsize=(12, 6))
+    interaction_data = {
+        'View': df_interaction['view_count'].sum(),
+        'Cart': df_interaction['cart_count'].sum(),
+        'Purchase': df_interaction['purchase_count'].sum()
+    }
+    sns.barplot(x=list(interaction_data.keys()), y=list(interaction_data.values()))
+    plt.title('Distribution of Event Types')
+    plt.xlabel('Event Type')
+    plt.ylabel('Count')
+    plt.tight_layout()
+    plt.savefig(f"{output_dir}/event_type_distribution.png")
+    plt.close()
+
+    # User interaction frequency
+    user_interaction_counts = df_interaction.groupby('user_id').size().reset_index(name='interaction_count')
+    plt.figure(figsize=(12, 6))
+    sns.histplot(user_interaction_counts['interaction_count'], bins=30, kde=True)
+    plt.title('Distribution of User Interaction Frequency')
+    plt.xlabel('Number of Product Interactions per User')
+    plt.ylabel('Count')
+    plt.tight_layout()
+    plt.savefig(f"{output_dir}/user_interaction_frequency.png")
+    plt.close()
+
+    # Product interaction frequency
+    product_interaction_counts = df_interaction.groupby('product_id').size().reset_index(name='interaction_count')
+    plt.figure(figsize=(12, 6))
+    sns.histplot(product_interaction_counts['interaction_count'], bins=30, kde=True)
+    plt.title('Distribution of Product Interaction Frequency')
+    plt.xlabel('Number of User Interactions per Product')
+    plt.ylabel('Count')
+    plt.tight_layout()
+    plt.savefig(f"{output_dir}/product_interaction_frequency.png")
+    plt.close()
+
+
+def create_all_features(pg_engine, mongo_db, output_dir='./Feature_output'):
+    logger.info(f"Creating all features in {output_dir}")
+
+    if not os.path.exists(output_dir):
+        os.makedirs(output_dir)
+
+    logger.info("Starting user features generation")
+    user_features = create_user_features(pg_engine, mongo_db)
+
+    # Extract RFM data for visualization
+    client = mongo_db[0]
+    db = mongo_db[1]
+    user_features_collection = db["user_features"]
+
+    user_sample = list(user_features_collection.find(
+        {},
+        {"user_id": 1, "rfm_metrics.activity_status": 1, "rfm_metrics.rfm_score.segment": 1,
+         "basic_metrics.total_spent": 1}
+    ).limit(10000))
+
+    if user_sample:
+        df_user_sample = pd.DataFrame([
+            {
+                "user_id": user["user_id"],
+                "activity_status": user["rfm_metrics"]["activity_status"],
+                "total_spent": user["basic_metrics"]["total_spent"],
+                "rfm_segment": user["rfm_metrics"]["rfm_score"]["segment"] if "rfm_score" in user[
+                    "rfm_metrics"] else "Unknown"
+            }
+            for user in user_sample
+        ])
+
+        plot_user_segmentation(df_user_sample, output_dir)
+
+    logger.info("Starting product features generation")
+    create_product_features(pg_engine, mongo_db)
+
+    logger.info("Starting interaction features generation")
+    create_interaction_features(pg_engine, mongo_db)
 
     logger.info("All features created successfully")
+    logger.info(f"Feature visualizations saved to {output_dir}")
 
 
 def create_user_features(pg_engine, mongo_db):
@@ -41,11 +183,10 @@ def create_user_features(pg_engine, mongo_db):
     db = mongo_db[1]
     cutoff_date = datetime(2019, 10, 1)
 
-    # Process users in batches to avoid memory issues
     batch_size = 10000
     offset = 0
 
-    max_batches = 10  # Adjust as needed
+    max_batches = 10
     batch_count = 0
 
     while batch_count < max_batches:
@@ -265,7 +406,6 @@ def create_user_features(pg_engine, mongo_db):
     user_features_collection.create_index("rfm_metrics.activity_status")
 
 def calculate_rfm_score(recency: float, frequency: int, monetary: float) -> dict:
-    """Calculate RFM scores and segment."""
     # Recency score (lower days = higher score)
     if recency <= 7:
         r_score = 5
@@ -331,164 +471,263 @@ def calculate_rfm_score(recency: float, frequency: int, monetary: float) -> dict
         "segment": segment
     }
 
+
 def create_product_features(pg_engine, mongo_db):
-    """Create and store product-related features."""
     logger.info("Creating product features")
     client = mongo_db[0]
     db = mongo_db[1]
 
-    cutoff_date = datetime(2019,10,1)
+    cutoff_date = datetime(2019, 10, 1)
 
-    product_query = f"""
-    WITH product_stats AS (
-        SELECT 
-            e.product_id,
-            COUNT(DISTINCT e.user_id) as unique_users,
-            COUNT(CASE WHEN e.event_type = 'view' THEN 1 END) as view_count,
-            COUNT(CASE WHEN e.event_type = 'cart' THEN 1 END) as cart_count,
-            COUNT(CASE WHEN e.event_type = 'purchase' THEN 1 END) as purchase_count
-        FROM ecommerce_db e
-        WHERE e.event_time >= '{cutoff_date.isoformat()}'
-        GROUP BY e.product_id
-    ),
-    product_price AS (
-        SELECT 
-            product_id,
-            PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price) as median_price
-        FROM ecommerce_db
-        WHERE event_time >= '{cutoff_date.isoformat()}'
-        GROUP BY product_id
-    ),
-    product_info AS (
-        SELECT DISTINCT
-            product_id,
-            category_id,
-            category_code,
-            brand,
-            price
-        FROM ecommerce_db
-        WHERE event_time >= '{cutoff_date.isoformat()}'
-    )
-    SELECT 
-        ps.product_id,
-        pi.category_id,
-        pi.category_code,
-        pi.brand,
-        COALESCE(pp.median_price, pi.price) as price,
-        COALESCE(ps.view_count, 0) as view_count,
-        COALESCE(ps.cart_count, 0) as cart_count,
-        COALESCE(ps.purchase_count, 0) as purchase_count,
-        COALESCE(ps.unique_users, 0) as unique_users,
-        CASE 
-            WHEN ps.view_count > 0 THEN ps.cart_count::float / ps.view_count
-            ELSE 0
-        END as cart_rate,
-        CASE 
-            WHEN ps.purchase_count > 0 THEN ps.unique_users::float / ps.purchase_count
-            ELSE 0
-        END as purchase_rate
-    FROM product_stats ps
-    LEFT JOIN product_info pi ON ps.product_id = pi.product_id
-    LEFT JOIN product_price pp ON ps.product_id = pp.product_id
-    """
+    batch_size = 5000
+    offset = 0
+    max_batches = 3
+    batch_count = 0
 
-    df_product_features = pd.read_sql(product_query, pg_engine)
-
-    bulk_operations = []
     product_features_collection = db["product_features"]
+    all_product_features = []
 
-    for _, product_row in df_product_features.iterrows():
-        product_id = product_row['product_id']
+    while batch_count < max_batches:
+        batch_count += 1
+        logger.info(f"Processing product batch #{batch_count} with offset {offset}")
 
-        product_features = {
-            'product_id': product_id,
-            'category_id': product_row['category_id'],
-            'category_code': product_row['category_code'],
-            'brand': product_row['brand'],
-            'price': float(product_row['price']),
-            'view_count': int(product_row['view_count']),
-            'cart_count': int(product_row['cart_count']),
-            'purchase_count': int(product_row['purchase_count']),
-            'unique_users': int(product_row['unique_users']),
-            'cart_rate': float(product_row['cart_rate']),
-            'purchase_rate': float(product_row['purchase_rate']),
-            'last_updated': datetime.now()
-        }
+        batch_query = f"""
+        SELECT DISTINCT product_id 
+        FROM ecommerce_db
+        WHERE event_time >= '{cutoff_date.isoformat()}'
+        ORDER BY product_id
+        LIMIT {batch_size} OFFSET {offset}
+        """
 
-        bulk_operations.append(
-            pymongo.UpdateOne(
-                {'product_id': product_id},
-                {'$set': product_features},
-                upsert=True
-            )
+        product_batch = pd.read_sql(batch_query, pg_engine)
+
+        if product_batch.empty:
+            logger.info("No more products to process. Exiting.")
+            break
+
+        product_ids = tuple(product_batch['product_id'].tolist())
+        if len(product_ids) == 1:
+            product_filter = f"product_id = {product_ids[0]}"
+        else:
+            product_filter = f"product_id IN {product_ids}"
+
+        # Get product stats for this batch
+        product_query = f"""
+        WITH product_stats AS (
+            SELECT 
+                e.product_id,
+                COUNT(DISTINCT e.user_id) as unique_users,
+                COUNT(CASE WHEN e.event_type = 'view' THEN 1 END) as view_count,
+                COUNT(CASE WHEN e.event_type = 'cart' THEN 1 END) as cart_count,
+                COUNT(CASE WHEN e.event_type = 'purchase' THEN 1 END) as purchase_count
+            FROM ecommerce_db e
+            WHERE e.event_time >= '{cutoff_date.isoformat()}' AND {product_filter}
+            GROUP BY e.product_id
+        ),
+        product_price AS (
+            SELECT 
+                product_id,
+                PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY price) as median_price
+            FROM ecommerce_db
+            WHERE event_time >= '{cutoff_date.isoformat()}' AND {product_filter}
+            GROUP BY product_id
+        ),
+        product_info AS (
+            SELECT DISTINCT
+                product_id,
+                category_id,
+                category_code,
+                brand,
+                price
+            FROM ecommerce_db
+            WHERE event_time >= '{cutoff_date.isoformat()}' AND {product_filter}
         )
+        SELECT 
+            ps.product_id,
+            pi.category_id,
+            pi.category_code,
+            pi.brand,
+            COALESCE(pp.median_price, pi.price) as price,
+            COALESCE(ps.view_count, 0) as view_count,
+            COALESCE(ps.cart_count, 0) as cart_count,
+            COALESCE(ps.purchase_count, 0) as purchase_count,
+            COALESCE(ps.unique_users, 0) as unique_users,
+            CASE 
+                WHEN ps.view_count > 0 THEN ps.cart_count::float / ps.view_count
+                ELSE 0
+            END as cart_rate,
+            CASE 
+                WHEN ps.cart_count > 0 THEN ps.purchase_count::float / ps.cart_count
+                ELSE 0
+            END as purchase_rate
+        FROM product_stats ps
+        LEFT JOIN product_info pi ON ps.product_id = pi.product_id
+        LEFT JOIN product_price pp ON ps.product_id = pp.product_id
+        """
 
-        if len(bulk_operations) >= 1000:
+        df_product_features = pd.read_sql(product_query, pg_engine)
+        all_product_features.append(df_product_features)
+
+        bulk_operations = []
+
+        for _, product_row in df_product_features.iterrows():
+            product_id = product_row['product_id']
+
+            product_features = {
+                'product_id': product_id,
+                'category_id': product_row['category_id'],
+                'category_code': product_row['category_code'],
+                'brand': product_row['brand'],
+                'price': float(product_row['price']),
+                'view_count': int(product_row['view_count']),
+                'cart_count': int(product_row['cart_count']),
+                'purchase_count': int(product_row['purchase_count']),
+                'unique_users': int(product_row['unique_users']),
+                'cart_rate': float(product_row['cart_rate']),
+                'purchase_rate': float(product_row['purchase_rate']),
+                'last_updated': datetime.now()
+            }
+
+            bulk_operations.append(
+                pymongo.UpdateOne(
+                    {'product_id': product_id},
+                    {'$set': product_features},
+                    upsert=True
+                )
+            )
+
+            if len(bulk_operations) >= 1000:
+                product_features_collection.bulk_write(bulk_operations)
+                bulk_operations = []
+
+        if bulk_operations:
             product_features_collection.bulk_write(bulk_operations)
-            bulk_operations = []
 
-    if bulk_operations:
-        product_features_collection.bulk_write(bulk_operations)
+        offset += batch_size
+        logger.info(f"Processed batch {batch_count} with {len(df_product_features)} products")
 
-    logger.info(f"Created features for {len(df_product_features)} products")
+    if batch_count >= max_batches:
+        logger.warning(f"Reached maximum batch count of {max_batches}. Consider adjusting parameters.")
+
+    logger.info("Finished creating product features")
     product_features_collection.create_index("product_id")
+    product_features_collection.create_index("category_code")
 
-def create_interaction_features(pg_engine, mongo_db, days_lookback: int = 300):
-    """Create and store interaction-related features."""
+    if all_product_features:
+        combined_df = pd.concat(all_product_features)
+        plot_product_analytics(combined_df)
+
+    return True
+
+
+def create_interaction_features(pg_engine, mongo_db):
     logger.info("Creating interaction features")
     client = mongo_db[0]
     db = mongo_db[1]
 
-    cutoff_date = datetime(2019,10,1)
+    cutoff_date = datetime(2019, 10, 1)
 
-    interaction_query = f"""
-    SELECT 
-        user_id,
-        product_id,
-        COUNT(CASE WHEN event_type = 'view' THEN 1 END) as view_count,
-        COUNT(CASE WHEN event_type = 'cart' THEN 1 END) as cart_count,
-        COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) as purchase_count
-    FROM ecommerce_db
-    WHERE event_time >= '{cutoff_date.isoformat()}'
-    GROUP BY user_id, product_id
-    """
+    batch_size = 5000
+    offset = 0
+    max_batches = 5
+    batch_count = 0
 
-    df_interaction_features = pd.read_sql(interaction_query, pg_engine)
-
-    bulk_operations = []
     interaction_features_collection = db["interaction_features"]
+    all_interaction_features = []
 
-    for _, interaction_row in df_interaction_features.iterrows():
-        user_id = interaction_row['user_id']
-        product_id = interaction_row['product_id']
+    while batch_count < max_batches:
+        batch_count += 1
+        logger.info(f"Processing interaction batch #{batch_count} with offset {offset}")
 
-        interaction_features = {
-            'user_id': user_id,
-            'product_id': product_id,
-            'view_count': int(interaction_row['view_count']),
-            'cart_count': int(interaction_row['cart_count']),
-            'purchase_count': int(interaction_row['purchase_count']),
-            'last_updated': datetime.now()
-        }
+        # Get a batch of users
+        user_batch_query = f"""
+        SELECT DISTINCT user_id 
+        FROM ecommerce_db
+        WHERE event_time >= '{cutoff_date.isoformat()}'
+        ORDER BY user_id
+        LIMIT {batch_size} OFFSET {offset}
+        """
 
-        bulk_operations.append(
-            pymongo.UpdateOne(
-                {'user_id': user_id, 'product_id': product_id},
-                {'$set': interaction_features},
-                upsert=True
+        user_batch = pd.read_sql(user_batch_query, pg_engine)
+
+        if user_batch.empty:
+            logger.info("No more users to process. Exiting.")
+            break
+
+        user_ids = tuple(user_batch['user_id'].tolist())
+        if len(user_ids) == 1:
+            user_filter = f"user_id = {user_ids[0]}"
+        else:
+            user_filter = f"user_id IN {user_ids}"
+
+        # Get interactions for these users
+        interaction_query = f"""
+        SELECT 
+            user_id,
+            product_id,
+            COUNT(CASE WHEN event_type = 'view' THEN 1 END) as view_count,
+            COUNT(CASE WHEN event_type = 'cart' THEN 1 END) as cart_count,
+            COUNT(CASE WHEN event_type = 'purchase' THEN 1 END) as purchase_count,
+            MAX(event_time) as last_interaction
+        FROM ecommerce_db
+        WHERE event_time >= '{cutoff_date.isoformat()}' AND {user_filter}
+        GROUP BY user_id, product_id
+        """
+
+        df_interaction_features = pd.read_sql(interaction_query, pg_engine)
+        all_interaction_features.append(df_interaction_features)
+
+        bulk_operations = []
+
+        for _, interaction_row in df_interaction_features.iterrows():
+            user_id = interaction_row['user_id']
+            product_id = interaction_row['product_id']
+
+            # Views = 1 point, Cart adds = 3 points, Purchases = 5 points
+            interaction_score = (
+                    interaction_row['view_count'] * 1 +
+                    interaction_row['cart_count'] * 3 +
+                    interaction_row['purchase_count'] * 5
             )
-        )
 
-        if len(bulk_operations) >= 1000:
+            interaction_features = {
+                'user_id': user_id,
+                'product_id': product_id,
+                'view_count': int(interaction_row['view_count']),
+                'cart_count': int(interaction_row['cart_count']),
+                'purchase_count': int(interaction_row['purchase_count']),
+                'interaction_score': int(interaction_score),
+                'last_interaction': interaction_row['last_interaction'],
+                'last_updated': datetime.now()
+            }
+
+            bulk_operations.append(
+                pymongo.UpdateOne(
+                    {'user_id': user_id, 'product_id': product_id},
+                    {'$set': interaction_features},
+                    upsert=True
+                )
+            )
+
+            if len(bulk_operations) >= 1000:
+                interaction_features_collection.bulk_write(bulk_operations)
+                bulk_operations = []
+
+        if bulk_operations:
             interaction_features_collection.bulk_write(bulk_operations)
-            bulk_operations = []
 
-    if bulk_operations:
-        interaction_features_collection.bulk_write(bulk_operations)
+        offset += batch_size
+        logger.info(f"Processed batch {batch_count} with {len(df_interaction_features)} user-product interactions")
 
-    logger.info(f"Created features for {len(df_interaction_features)} user-product interactions")
-    interaction_features_collection.create_index(
-        [("user_id", pymongo.ASCENDING), ("product_id", pymongo.ASCENDING)]
-    )
+    if batch_count >= max_batches:
+        logger.warning(f"Reached maximum batch count of {max_batches}. Consider adjusting parameters.")
+
+    logger.info("Finished creating interaction features")
+    interaction_features_collection.create_index([("user_id", pymongo.ASCENDING), ("product_id", pymongo.ASCENDING)])
+    interaction_features_collection.create_index("interaction_score")
+
+    if all_interaction_features:
+        combined_df = pd.concat(all_interaction_features)
+        plot_interaction_patterns(combined_df)
 
     return True

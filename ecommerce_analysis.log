@@ -10570,3 +10570,101 @@ cannot load library 'libcairo-2.dll': dlopen(libcairo-2.dll, 0x0002): tried: 'li
 2025-04-27 16:54:52,974 - utils - INFO - MongoDB collections created
 2025-04-27 16:54:52,974 - utils - INFO - Loading user features from MongoDB...
 2025-04-27 16:54:52,983 - utils - ERROR - No user features found.
+2025-04-27 18:47:09,197 - utils - INFO - MongoDB collections created
+2025-04-27 18:47:16,596 - utils - INFO - MongoDB collections created
+2025-04-27 18:47:16,596 - utils - INFO - Creating all features in ./Feature_output
+2025-04-27 18:47:16,596 - utils - INFO - Starting user features generation
+2025-04-27 18:47:16,596 - utils - INFO - Creating user features
+2025-04-27 18:47:16,596 - utils - INFO - Processing batch #1 with offset 0
+2025-04-27 18:56:08,150 - utils - INFO - Processed batch 1 with 10000 users
+2025-04-27 18:56:08,156 - utils - INFO - Processing batch #2 with offset 10000
+2025-04-27 19:05:18,017 - utils - INFO - Processed batch 2 with 10000 users
+2025-04-27 19:05:18,024 - utils - INFO - Processing batch #3 with offset 20000
+2025-04-27 19:15:22,875 - utils - INFO - Processed batch 3 with 10000 users
+2025-04-27 19:15:22,880 - utils - INFO - Processing batch #4 with offset 30000
+2025-04-27 19:26:14,190 - utils - INFO - Processed batch 4 with 10000 users
+2025-04-27 19:26:14,198 - utils - INFO - Processing batch #5 with offset 40000
+2025-04-27 19:38:01,419 - utils - INFO - Processed batch 5 with 10000 users
+2025-04-27 19:38:01,427 - utils - INFO - Processing batch #6 with offset 50000
+2025-04-27 19:50:14,915 - utils - INFO - Processed batch 6 with 10000 users
+2025-04-27 19:50:14,921 - utils - INFO - Processing batch #7 with offset 60000
+2025-04-27 20:03:46,746 - utils - INFO - Processed batch 7 with 10000 users
+2025-04-27 20:03:46,758 - utils - INFO - Processing batch #8 with offset 70000
+2025-04-27 20:18:07,188 - utils - INFO - Processed batch 8 with 10000 users
+2025-04-27 20:18:07,198 - utils - INFO - Processing batch #9 with offset 80000
+2025-04-27 20:31:29,578 - utils - INFO - Processed batch 9 with 10000 users
+2025-04-27 20:31:29,590 - utils - INFO - Processing batch #10 with offset 90000
+2025-04-27 20:45:46,635 - utils - INFO - Processed batch 10 with 10000 users
+2025-04-27 20:45:46,643 - utils - WARNING - Reached maximum batch count of 10. Consider adjusting parameters.
+2025-04-27 20:45:46,644 - utils - INFO - Finished creating user features
+2025-04-27 20:45:48,119 - utils - INFO - Starting product features generation
+2025-04-27 20:45:48,119 - utils - INFO - Creating product features
+2025-04-27 20:45:48,119 - utils - INFO - Processing product batch #1 with offset 0
+2025-04-27 20:57:14,347 - utils - INFO - Processed batch 1 with 44989 products
+2025-04-27 20:57:14,355 - utils - INFO - Processing product batch #2 with offset 5000
+2025-04-27 21:04:41,537 - utils - INFO - Processed batch 2 with 27727 products
+2025-04-27 21:04:41,577 - utils - INFO - Processing product batch #3 with offset 10000
+2025-04-27 21:13:43,398 - utils - INFO - Processed batch 3 with 28044 products
+2025-04-27 21:13:43,410 - utils - INFO - Processing product batch #4 with offset 15000
+2025-04-27 21:23:18,664 - utils - INFO - Processed batch 4 with 25064 products
+2025-04-27 21:23:18,676 - utils - INFO - Processing product batch #5 with offset 20000
+2025-04-27 21:32:51,617 - utils - INFO - Processed batch 5 with 24064 products
+2025-04-27 21:32:51,628 - utils - INFO - Processing product batch #6 with offset 25000
+2025-04-27 21:37:26,555 - utils - INFO - MongoDB collections created
+2025-04-27 21:37:35,148 - utils - INFO - MongoDB collections created
+2025-04-27 21:37:35,149 - utils - INFO - Connecting to databases...
+2025-04-27 21:37:35,184 - utils - INFO - MongoDB collections created
+2025-04-27 21:37:35,184 - utils - INFO - Loading user features from MongoDB...
+2025-04-27 21:38:55,461 - utils - INFO - Loading purchase transactions from PostgreSQL...
+2025-04-27 21:40:20,730 - utils - INFO - Generating labels from timestamp comparisons...
+2025-04-27 21:40:20,772 - utils - INFO - Purchase data range: 2019-10-01 00:02:14+00:00 to 2019-11-30 23:59:44+00:00
+2025-04-27 21:40:20,772 - utils - INFO - last_event_time range: 2019-10-03 23:59:44+00:00 to 2019-12-01 23:59:44+00:00
+2025-04-27 21:40:21,364 - utils - INFO - Evaluating 65885/100000 users with valid future windows
+2025-04-27 21:41:38,878 - utils - INFO - Label distribution:
+label
+0    100000
+Name: count, dtype: int64
+2025-04-27 21:41:38,879 - utils - WARNING - No positive labels found - creating synthetic samples for testing
+2025-04-27 21:41:38,886 - utils - INFO - New label distribution:
+label
+0    90000
+1    10000
+Name: count, dtype: int64
+2025-04-27 21:41:38,886 - utils - INFO - Preparing features and training model...
+2025-04-27 21:41:46,980 - utils - INFO - Saving confusion matrix...
+2025-04-27 21:41:47,896 - utils - INFO - Ranking users by purchase probability...
+2025-04-27 21:41:49,311 - utils - INFO - ✅ Prediction complete. Charts and CSV saved to predictions/
+2025-04-27 21:44:58,375 - utils - INFO - MongoDB collections created
+2025-04-27 21:44:58,780 - utils - INFO - MongoDB collections created
+2025-04-27 21:44:58,780 - utils - INFO - Creating all features in ./Feature_output
+2025-04-27 21:44:58,780 - utils - INFO - Starting user features generation
+2025-04-27 21:44:59,401 - utils - INFO - Starting product features generation
+2025-04-27 21:44:59,401 - utils - INFO - Creating product features
+2025-04-27 21:44:59,401 - utils - INFO - Processing product batch #1 with offset 0
+2025-04-27 21:55:24,220 - utils - INFO - Processed batch 1 with 44989 products
+2025-04-27 21:55:24,226 - utils - INFO - Processing product batch #2 with offset 5000
+2025-04-27 22:03:10,734 - utils - INFO - Processed batch 2 with 27727 products
+2025-04-27 22:03:10,744 - utils - INFO - Processing product batch #3 with offset 10000
+2025-04-27 22:11:48,313 - utils - INFO - Processed batch 3 with 28044 products
+2025-04-27 22:11:48,334 - utils - WARNING - Reached maximum batch count of 3. Consider adjusting parameters.
+2025-04-27 22:11:48,334 - utils - INFO - Finished creating product features
+2025-04-27 22:11:48,942 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-27 22:11:48,963 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-27 22:11:49,118 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-27 22:11:49,121 - matplotlib.category - INFO - Using categorical units to plot a list of strings that are all parsable as floats or dates. If these strings should be plotted as numbers, cast to the appropriate data type before plotting.
+2025-04-27 22:11:49,522 - utils - INFO - Starting interaction features generation
+2025-04-27 22:11:49,522 - utils - INFO - Creating interaction features
+2025-04-27 22:11:49,522 - utils - INFO - Processing interaction batch #1 with offset 0
+2025-04-27 22:18:17,491 - utils - INFO - Processed batch 1 with 25436 user-product interactions
+2025-04-27 22:18:17,502 - utils - INFO - Processing interaction batch #2 with offset 5000
+2025-04-27 22:27:11,792 - utils - INFO - Processed batch 2 with 23291 user-product interactions
+2025-04-27 22:27:11,802 - utils - INFO - Processing interaction batch #3 with offset 10000
+2025-04-27 22:42:00,733 - utils - INFO - Processed batch 3 with 22573 user-product interactions
+2025-04-27 22:42:00,826 - utils - INFO - Processing interaction batch #4 with offset 15000
+2025-04-27 22:56:57,609 - utils - INFO - Processed batch 4 with 23388 user-product interactions
+2025-04-27 22:56:57,628 - utils - INFO - Processing interaction batch #5 with offset 20000
+2025-04-27 23:14:59,998 - utils - INFO - Processed batch 5 with 23356 user-product interactions
+2025-04-27 23:15:00,027 - utils - WARNING - Reached maximum batch count of 5. Consider adjusting parameters.
+2025-04-27 23:15:00,027 - utils - INFO - Finished creating interaction features
+2025-04-27 23:15:02,155 - utils - INFO - All features created successfully
+2025-04-27 23:15:02,155 - utils - INFO - Feature visualizations saved to ./Feature_output

@@ -17,10 +17,10 @@ def main():
 
     # perform_eda()
 
-    # create_all_features(pg_engine, mongo_db)
+    create_all_features(pg_engine, mongo_db)
 
 
-    run_predictions()
+    # run_predictions()
 
 
 
